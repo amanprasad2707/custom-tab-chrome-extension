@@ -1,44 +1,42 @@
-
 const editableText = document.getElementById('editable-text');
-console.log(editableText);
+const search = document.getElementById("search");
+const todoInput = document.getElementById("todo-input");
+const addTodoBtn = document.getElementById("add-todo");
 
+// Preserve editable text content in localStorage
 if (localStorage.getItem('savedText')) {
   editableText.textContent = localStorage.getItem('savedText');
 }
-
-
 editableText.addEventListener('input', function () {
-
   localStorage.setItem('savedText', this.textContent);
-})
+});
 
+// Google Search Functionality
 function googleSearch() {
   var text = document.getElementById("search").value;
-  var cleanQuery = text.replace(" ", "+", text);
+  var cleanQuery = text.replace(/\s+/g, "+"); // Replace spaces with '+'
   var url = 'http://www.google.com/search?q=' + cleanQuery;
-
   window.location.href = url;
 }
 
-const search = document.getElementById("search");
+// Keyboard Events for Search and Todo
 document.addEventListener("keydown", function (event) {
-  // Check if the '/' key was pressed
   if (event.key === '/') {
-    // Prevent the default behavior of '/'
     event.preventDefault();
-    // Focus the input element
-    search.focus();
+    search.focus(); // Focus the search input
   }
-});
 
-document.addEventListener("keydown", function (event) {
-  // Check if 'Ctrl' and 'Enter' keys are pressed together
-  // if (event.ctrlKey && event.key === 'Enter') {
+  // Handle Enter key contextually based on focus
   if (event.key === 'Enter') {
-    googleSearch();
+    if (document.activeElement === search) {
+      googleSearch(); // If search box is focused, perform Google search
+    } else if (document.activeElement === todoInput) {
+      addTodoBtn.click(); // If todo input is focused, add the todo
+    }
   }
 });
 
+// Clock Functionality
 function updateClock() {
   const clockElement = document.getElementById('clock');
   const now = new Date();
@@ -48,41 +46,29 @@ function updateClock() {
   let seconds = now.getSeconds();
   let amPm = 'AM';
 
-  // Convert 24-hour format to 12-hour format and set AM/PM
   if (hours >= 12) {
-      amPm = 'PM';
-      if (hours > 12) {
-          hours -= 12;
-      }
+    amPm = 'PM';
+    if (hours > 12) {
+      hours -= 12;
+    }
   }
   if (hours === 0) {
-      hours = 12;  // 12 AM instead of 00
+    hours = 12;
   }
 
-  // Format time with leading zeros
   hours = (hours < 10) ? '0' + hours : hours;
   minutes = (minutes < 10) ? '0' + minutes : minutes;
-  seconds = (seconds < 10) ? '0' + seconds : seconds;
 
-  // Display the time in the format HH:MM:SS AM/PM
   clockElement.innerHTML = `${hours}:${minutes} ${amPm}`;
 }
 
-// Update the clock every second
 setInterval(updateClock, 1000);
-
-// Initial call to display the time immediately when the page loads
 updateClock();
 
-
-/* todo section */
-
+// Todo Section
 document.addEventListener("DOMContentLoaded", () => {
-  const todoInput = document.getElementById("todo-input");
-  const addTodoBtn = document.getElementById("add-todo");
   const displayTodos = document.getElementById("display-todos");
 
-  // Load todos from localStorage
   let todos = JSON.parse(localStorage.getItem("todos")) || [];
 
   const saveTodos = () => {
@@ -90,17 +76,15 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const renderTodos = () => {
-    displayTodos.innerHTML = ""; // Clear previous todos
+    displayTodos.innerHTML = "";
     todos.forEach((todo, index) => {
       const li = document.createElement("li");
 
-      // Editable text input
       const input = document.createElement("input");
       input.type = "text";
       input.value = todo;
       input.readOnly = true;
 
-      // Edit button
       const editBtn = document.createElement("button");
       editBtn.textContent = "✏️";
       editBtn.classList.add("edit");
@@ -116,7 +100,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
 
-      // Delete button
       const deleteBtn = document.createElement("button");
       deleteBtn.textContent = "❌";
       deleteBtn.classList.add("delete");
@@ -133,7 +116,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   };
 
-  // Add a new todo
   addTodoBtn.addEventListener("click", () => {
     const todo = todoInput.value.trim();
     if (todo) {
@@ -144,6 +126,5 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Initial render
   renderTodos();
 });

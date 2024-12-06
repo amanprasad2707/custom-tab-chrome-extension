@@ -324,6 +324,7 @@ input {
 
 #search-container {
   display: flex;
+  color: #ffffff !important;
   justify-content: center;
   gap: 0.2rem;
   margin-top: 13%;
@@ -332,7 +333,7 @@ input {
 #search-input-container > input,
 #search-container > button {
   background-color: rgb(255 255 255 / 10%);
-  /* color: rgb(255 255 255 / 80%); */
+  color: rgb(255 255 255 / 80%);
   background-color: #313131;
   font-size: 1rem;
   border: none;
